@@ -1,0 +1,199 @@
+﻿@model IEnumerable<NewUniversity.Models.Enrollment>
+
+
+
+
+
+<h1>Details</h1>
+
+
+
+
+
+<table class="table">
+
+    <thead>
+
+        <tr>
+
+            <th>
+
+                @Html.DisplayNameFor(model => model.Student.Index)
+
+            </th>
+
+            <th>
+
+                @Html.DisplayNameFor(model => model.Student.FullName)
+
+            </th>
+
+            <th>
+
+                @Html.DisplayNameFor(model => model.Semester)
+
+            </th>
+
+            <th>
+
+                @Html.DisplayNameFor(model => model.Year)
+
+            </th>
+
+            <th>
+
+                @Html.DisplayNameFor(model => model.Grade)
+
+            </th>
+
+            <th>
+
+                @Html.DisplayNameFor(model => model.SeminalUrl)
+
+            </th>
+
+            <th>
+
+                @Html.DisplayNameFor(model => model.ProjectUrl)
+
+            </th>
+
+            <th>
+
+                @Html.DisplayNameFor(model => model.ExamPoints)
+
+            </th>
+
+            <th>
+
+                @Html.DisplayNameFor(model => model.SeminalPoints)
+
+            </th>
+
+            <th>
+
+                @Html.DisplayNameFor(model => model.ProjectPoints)
+
+            </th>
+
+            <th>
+
+                @Html.DisplayNameFor(model => model.AdditionalPoints)
+
+            </th>
+
+            <th>
+
+                @Html.DisplayNameFor(model => model.FinishDate)
+
+            </th>
+
+            <th></th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        @foreach (var item in Model)
+
+        {
+
+            <tr>
+
+                <td>
+
+                    @Html.DisplayFor(modelItem => item.Student.Index)
+
+                </td>
+
+                <td>
+
+                    @Html.DisplayFor(modelItem => item.Student.FullName)
+
+                </td>
+
+                <td>
+
+                    @Html.DisplayFor(modelItem => item.Semester)
+
+                </td>
+
+                <td>
+
+                    @Html.DisplayFor(modelItem => item.Year)
+
+                </td>
+
+                <td>
+
+                    @Html.DisplayFor(modelItem => item.Grade)
+
+                </td>
+
+                <td>
+
+                    @Html.DisplayFor(modelItem => item.SeminalUrl)
+
+                </td>
+
+                <td>
+
+                    @Html.DisplayFor(modelItem => item.ProjectUrl)
+
+                </td>
+
+                <td>
+
+                    @Html.DisplayFor(modelItem => item.ExamPoints)
+
+                </td>
+
+                <td>
+
+                    @Html.DisplayFor(modelItem => item.SeminalPoints)
+
+                </td>
+
+                <td>
+
+                    @Html.DisplayFor(modelItem => item.ProjectPoints)
+
+                </td>
+
+                <td>
+
+                    @Html.DisplayFor(modelItem => item.AdditionalPoints)
+
+                </td>
+
+                <td>
+
+                    @Html.DisplayFor(modelItem => item.FinishDate)
+
+                </td>
+
+                <td>
+
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>   |
+
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
+
+                </td>
+
+            </tr>
+
+        }
+
+    </tbody>
+
+</table>
+
+
+
+<div>
+
+    <a asp-action="Index">Back to Courses</a>
+
+</div>
