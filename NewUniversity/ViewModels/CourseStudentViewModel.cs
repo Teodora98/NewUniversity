@@ -10,9 +10,7 @@ namespace NewUniversity.ViewModels
     public class CourseStudentViewModel
     {
         public Course Course { get; set; }
-
         public IEnumerable<int> SelectedStudents { get; set; }
-
         public IEnumerable<SelectListItem> StudentsList { get; set; }
-    }
+    } 
 }

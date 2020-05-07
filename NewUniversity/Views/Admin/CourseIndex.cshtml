@@ -1,0 +1,87 @@
+﻿@model NewUniversity.ViewModels.CourseFilterViewModel
+<p>
+    <a asp-action="CourseCreate">Create New</a>
+</p>
+<form  asp-action="CourseIndex">
+    <div class="row">
+        <div class="col-3">
+            <p class="form-group">
+                <label>Semester</label>
+                <select class="form-control" asp-for="CourseSemester" asp-items="Model.Semesters">
+                    <option value=""></option>
+                </select>
+             </p>
+        </div>
+        <div class="col-3">
+            <p class="form-group">
+                <label>Programme</label>
+                <select class="form-control" asp-for="CourseProgramme" asp-items="Model.Programmes">
+                    <option value=""></option>
+                </select>
+            </p>
+        </div>
+        <div class="col-3">
+            <p class="form-group">
+                <label>Title</label>
+                <input class="form-control" type="text" asp-for="SearchString" />
+            </p>
+        </div>
+        <div class="col-3">
+            <p class="form-group">
+                <label>Teacher</label>
+                <input class="form-control" type="text" asp-for="TeacherString" />
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <p class="form-group">
+                <input type="submit" value="Filter" class="align-content-center" />
+            </p>
+        </div>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Courses[0].Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Courses[0].Programme)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Courses[0].FirstTeacher)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Courses[0].SecondTeacher)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Courses)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Programme)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstTeacher.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SecondTeacher.FirstName)
+                </td>
+                <td>
+                    <a asp-action="CourseEdit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="CourseDetails" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="CourseDelete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

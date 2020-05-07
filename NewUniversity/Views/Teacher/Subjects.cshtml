@@ -1,0 +1,48 @@
+﻿@model IEnumerable<NewUniversity.Models.Course>
+@{
+    ViewData["Title"] = "Subjects";
+}
+
+<h1>Subjects</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Semester)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstTeacher)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SecondTeacher)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Semester)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstTeacher.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SecondTeacher.FullName)
+                </td>
+                <td>
+                    <a asp-action="StudentSubject" asp-route-id="@item.Id">Show students</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>

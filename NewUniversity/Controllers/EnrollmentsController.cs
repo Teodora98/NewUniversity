@@ -1,10 +1,12 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NewUniversity.Data;
 using NewUniversity.Models;
+using NewUniversity.ViewModels;
 
 namespace NewUniversity.Controllers
 {
@@ -43,11 +45,21 @@ namespace NewUniversity.Controllers
         }
 
         // GET: Enrollments/Create
-        public IActionResult Create(int? id)
+        public IActionResult Create(int? id,NewStudentEnrollmentsViewModel newStudentEnrollmentsViewModel)
         {
-            ViewData["Id"] = id;
+            /*ViewData["Id"] = id;
             ViewData["StudentId"] = new SelectList(_context.Student, "Id", "FullName");
-            return View();
+            return View();*/
+            var courses = _context.Enrollment.Include(e => e.Student).Where(e => e.CourseId == id).First();
+            NewStudentEnrollmentsViewModel coursestudent = new NewStudentEnrollmentsViewModel
+            {
+                Enrollments = courses,
+                StudentsList = new MultiSelectList(_context.Student.OrderBy(s => s.FirstName), "Id", "FullName"),
+                SelectedStudents = _context.Enrollment
+                                    .Where(s=>s.CourseId==id)
+                                    .Include(m=>m.Student).Select(sa => sa.StudentId)
+            };
+            return View(coursestudent);
         }
 
 
@@ -59,7 +71,7 @@ namespace NewUniversity.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CourseId,StudentId,Semester,Year,Grade,SeminalUrl,ProjectUrl,ExamPoints,SeminalPoints,ProjectPoints,AdditionalPoints,FinishDate")] Enrollment enrollment)
+        /*public async Task<IActionResult> Create([Bind("CourseId,StudentId,Semester,Year,Grade,SeminalUrl,ProjectUrl,ExamPoints,SeminalPoints,ProjectPoints,AdditionalPoints,FinishDate")] Enrollment enrollment)
         {
             if (ModelState.IsValid)
             {
@@ -70,7 +82,23 @@ namespace NewUniversity.Controllers
             ViewData["CourseId"] = new SelectList(_context.Course, "Id", "Title", enrollment.CourseId);
             ViewData["StudentId"] = new SelectList(_context.Student, "Id", "FirstName", enrollment.StudentId);
             return View(enrollment);
+        }*/
+        public async Task<IActionResult> Create(int id, NewStudentEnrollmentsViewModel newStudentEnrollmentsViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                
+                IEnumerable<int> listStudents = newStudentEnrollmentsViewModel.SelectedStudents;
+                IEnumerable<int> existStudents = _context.Enrollment.Where(s => listStudents.Contains(s.StudentId) && s.CourseId == id).Select(s => s.StudentId);
+                IEnumerable<int> newStudents = listStudents.Where(s => !existStudents.Contains(s));
+                foreach (int studentId in newStudents)
+                    _context.Enrollment.Add(new Enrollment { StudentId = studentId, CourseId = id, Year=newStudentEnrollmentsViewModel.Enrollments.Year, Semester=newStudentEnrollmentsViewModel.Enrollments.Semester});
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(newStudentEnrollmentsViewModel);
         }
+
         // GET: Enrollments/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -146,7 +174,7 @@ namespace NewUniversity.Controllers
             return View(enrollment);
         }
 
-        // POST: Enrollments/Delete/5
+       
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

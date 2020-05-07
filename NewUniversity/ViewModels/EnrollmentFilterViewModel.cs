@@ -9,10 +9,9 @@ namespace NewUniversity.ViewModels
 {
     public class EnrollmentFilterViewModel
     {
+        public SelectList SelectYear { get; set; }
         public IList<Enrollment> Enrollments{ get; set; }
-        public string SeacrhFullName { get; set; }
-        public string SearchCourse { get; set; }
-        public SelectList Courses { get; set; }
+        public int EnrollmentYear { get; set; }
 
     }
 }

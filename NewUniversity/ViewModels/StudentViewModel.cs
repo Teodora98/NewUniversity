@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Http;
+using NewUniversity.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace NewUniversity.Models
+namespace NewUniversity.ViewModels
 {
-    public class Student
+    public class StudentViewModel
     {
         public int Id { get; set; }
 
@@ -41,6 +42,6 @@ namespace NewUniversity.Models
         [StringLength(25)]
         public string EducationLevel { get; set; }
         public ICollection<Enrollment> Courses { get; set; }
-        public string UserProfileImage { get; set; }
+        public IFormFile UserProfileImage { get; set; }
     }
 }

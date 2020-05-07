@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -25,11 +26,10 @@ namespace NewUniversity.Models
         public DateTime? HireDate { get; set; }
         public string FullName
         {
-            //get { return string.Format("{0}, {1}", FirstName, LastName);}
-
             get { return FirstName + " " + LastName; }
         }
         public ICollection<Course> Courses_first { get; set; }
         public ICollection<Course> Courses_second { get; set; }
+        public string TeacherProfileImage { get; set; }
     }
 }

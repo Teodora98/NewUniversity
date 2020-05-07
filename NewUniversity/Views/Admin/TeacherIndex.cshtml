@@ -1,0 +1,77 @@
+﻿@model IEnumerable<NewUniversity.Models.Teacher>
+<p>
+    <a asp-action="TeacherCreate">Create New</a>
+</p>
+<!--
+<form  asp-action="TeacherIndex" method="get">
+    <div class="row">
+        <div class="col-4">
+            <p class="form-group">
+                <label>Academic rank</label>
+                <select class="form-control" asp-for="TeacherAcademicRank" asp-items="Model.AcademicRanges">
+                    <option value=""></option>
+                </select>
+            </p>
+        </div>
+        <div class="col-4">
+            <p class="form-group">
+                <label>Teacher degree</label>
+                <select class="form-control" asp-for="TeacherDegree" asp-items="Model.Degrees">
+                    <option value=""></option>
+                </select>
+            </p>
+        </div>
+        <div class="col-4">
+            <p class="form-group">
+                <label>Full Name:</label>
+                <input type="text" class="form-control" asp-for="SearchFullName" name="SearchFullName" />
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <p class="form-group">
+                <input type="submit" value="Filter" class="align-content-center" />
+            </p>
+        </div>
+    </div>
+</form>
+    -->
+
+<table class="table">
+    <thead>
+        <tr>
+            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastName)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @if (@item.TeacherProfileImage != null)
+                {
+                    <img src="~/images/@item.TeacherProfileImage" class="rounded-circle" height="40" width="40" asp-append-version="true" />
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                <a asp-action="TeacherEdit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="TeacherDetails" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="TeacherDelete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
