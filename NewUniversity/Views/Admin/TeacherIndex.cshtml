@@ -1,9 +1,8 @@
-﻿@model IEnumerable<NewUniversity.Models.Teacher>
+﻿@model NewUniversity.ViewModels.TeacherFilterViewModel
 <p>
-    <a asp-action="TeacherCreate">Create New</a>
+    <a asp-action="Create">Create New</a>
 </p>
-<!--
-<form  asp-action="TeacherIndex" method="get">
+<form asp-action="TeacherIndex" method="get">
     <div class="row">
         <div class="col-4">
             <p class="form-group">
@@ -36,42 +35,76 @@
         </div>
     </div>
 </form>
-    -->
 
 <table class="table">
     <thead>
         <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Teachers[0].FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Teachers[0].LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Teachers[0].Degree)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Teachers[0].AcademicRank)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Teachers[0].OfficeNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Teachers[0].HireDate)
+            </th>
             <th></th>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastName)
-            </th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Teachers)
         {
-        <tr>
-            <td>
-                @if (@item.TeacherProfileImage != null)
-                {
-                    <img src="~/images/@item.TeacherProfileImage" class="rounded-circle" height="40" width="40" asp-append-version="true" />
-                }
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                <a asp-action="TeacherEdit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="TeacherDetails" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="TeacherDelete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-        }
-    </tbody>
+            <tr>
+
+                <td>
+
+                    @{ if (item.TeacherProfileImage != null)
+
+                        {
+
+                            <img src="~/images/@item.TeacherProfileImage"
+                                 class="rounded-circle"
+                                 height="40" width="40"
+                                 asp-append-version="true" />}
+
+                    }
+
+                </td>
+                </tr>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Degree)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AcademicRank)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OfficeNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.HireDate)
+                </td>
+                <td>
+                    <a asp-action="TeacherEdit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="TeacherDetails" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="TeacherDelete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+            }
+        </tbody>
 </table>

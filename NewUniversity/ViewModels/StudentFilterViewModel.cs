@@ -11,8 +11,6 @@ namespace NewUniversity.ViewModels
     {
         public IList<Student> Students { get; set; }
 
-        public string StudentIndex { get; set; }
-
         public string SearchFullName { get; set; }
 
         public string SearchCourse { get; set; } 

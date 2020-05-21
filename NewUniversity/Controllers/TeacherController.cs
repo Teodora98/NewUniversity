@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using NewUniversity.ViewModels;
 
 namespace NewUniversity.Controllers
 {
+    //[Authorize(Roles = "Teacher")]
     public class TeacherController : Controller
     {
 
@@ -54,7 +56,7 @@ namespace NewUniversity.Controllers
                  .Include(e=>e.Course)
                  .Where(s => s.CourseId == id);
              return View(await students.ToListAsync());*/
-            IQueryable<int?> year = _context.Enrollment.Select(m => m.Year).Distinct(); ;
+            IQueryable<int?> year = _context.Enrollment.Select(m => m.Year).Distinct(); 
             var enrollments = _context.Enrollment
                 .Include(e => e.Student)
                 .Include(e => e.Course)

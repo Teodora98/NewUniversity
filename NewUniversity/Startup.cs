@@ -1,15 +1,12 @@
 ﻿using Microsoft.AspNetCore.Builder;
-
 using Microsoft.AspNetCore.Hosting;
-
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-
 using Microsoft.Extensions.Configuration;
-
 using Microsoft.Extensions.DependencyInjection;
-
 using Microsoft.Extensions.Hosting;
 using NewUniversity.Data;
+using NewUniversity.Models;
 
 namespace NewUniveristy
 
@@ -32,11 +29,25 @@ namespace NewUniveristy
         public void ConfigureServices(IServiceCollection services)
 
         {
-
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        );
+            });
+            //Json result for api client
+            services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_3_0)
+                .AddJsonOptions(x =>
+                {
+                    x.JsonSerializerOptions.WriteIndented = true; //pretty json
+                });
+            //services.AddCors();
             services.AddControllersWithViews();
-
+            services.AddDefaultIdentity<AppUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<NewUniversityContext>().AddDefaultTokenProviders();
             services.AddDbContext<NewUniversityContext>(options => options.UseSqlServer(Configuration.GetConnectionString("NewUniversityContext")));
-
+            // services.ConfigureApplicationCookie(opts => opts.LoginPath = "/Authenticate /Login");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,12 +77,12 @@ namespace NewUniveristy
             }
 
             app.UseHttpsRedirection();
-
             app.UseStaticFiles();
-
             app.UseRouting();
-
             app.UseAuthorization();
+            app.UseStatusCodePages();
+            app.UseDeveloperExceptionPage();
+            app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
 
@@ -83,6 +94,7 @@ namespace NewUniveristy
                     pattern: "{controller=Students}/{action=Index}/{id?}");
 
             });
+            app.UseCors("CorsPolicy");
 
         }
 

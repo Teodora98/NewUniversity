@@ -1,11 +1,12 @@
 ﻿using NewUniversity.Models;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace NewUniversity.Data
 {
 
-    public class NewUniversityContext : DbContext
+    public class NewUniversityContext : IdentityDbContext<AppUser>
     { 
         public NewUniversityContext(DbContextOptions<NewUniversityContext> options) : base(options)
 
@@ -24,7 +25,7 @@ namespace NewUniversity.Data
         protected override void OnModelCreating(ModelBuilder builder)
 
         {
-
+            base.OnModelCreating(builder);
             builder.Entity<Teacher>()
 
                 .HasMany<Course>(p => p.Courses_first)

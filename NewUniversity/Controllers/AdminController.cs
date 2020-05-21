@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NewUniversity.Data;
@@ -13,16 +15,147 @@ using NewUniversity.ViewModels;
 
 namespace NewUniversity.Controllers
 {
+    
     public class AdminController : Controller
     {
         private readonly NewUniversityContext _context;
         private readonly IWebHostEnvironment webHostEnvironment;
-        public AdminController(NewUniversityContext context, IWebHostEnvironment hostEnvironment)
+        //private UserManager<AppUser> userManager;
+        //private  RoleManager<IdentityRole> roleManager;
+        //private IPasswordHasher<AppUser> passwordHasher;
+        //private IPasswordValidator<AppUser> passwValidator;
+        //private IUserValidator<AppUser> userValidator;
+        public AdminController(NewUniversityContext context,IWebHostEnvironment hostEnvironment)
         {
             _context = context;
             webHostEnvironment = hostEnvironment;
+            /*userManager = usrMgr;
+            passwordHasher = passw;
+            this.roleManager = roleManager;
+            passwValidator = passwV;
+            userValidator = userV;*/
+        }
+       /* [HttpGet]
+        public  IActionResult CreateUser(int studentId, int teacherId)
+        {
+            ViewData["studentId"] = studentId;
+            ViewData["teacherId"] = teacherId;
+            return View();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateUser(User user)
+        {
+            if (ModelState.IsValid)
+            {
+                AppUser appuser = new AppUser
+                {
+                    Email = user.Email
+                };
+               
+                if (user.StudentId != 0)
+                {
+                    appuser.StudentId = user.StudentId;
+                    appuser.Role = "student";
+                }
+                else if (user.TeacherId != 0)
+                {
+                    appuser.TeacherId = user.TeacherId;
+                    appuser.Role = "teacher";
+                }
+                else
+                {
+                    appuser.Role = "admin";
+                }
+                IdentityResult result = await userManager.CreateAsync(appuser, user.Password);
+                if (result.Succeeded)
+                {
+                    if (user.StudentId != 0)
+                    {
+                        await userManager.AddToRoleAsync(appuser, "student");
+                    }
+                    else if (user.TeacherId != 0)
+                    {
+                        await userManager.AddToRoleAsync(appuser, "teacher");
+                    }
+                    else
+                    {
+                        await userManager.AddToRoleAsync(appuser, "admin");
+                    }
+                    return RedirectToAction("ShowUser");
+                }
+                else
+                {
+                    foreach (IdentityError error in result.Errors)
+                        ModelState.TryAddModelError(error.Code, error.Description);
+                }
+            }
+            return View(user);
+        }
+        public IActionResult ShowUser()
+        {
+            return View(userManager.Users);
+        }
+        public async Task<IActionResult> Update(string id)
+        {
+            AppUser user = await userManager.FindByIdAsync(id);
+            if (user != null)
+                return View(user);
+            else
+                return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Update(string id, string email, string password)
+        {
+            AppUser user = await userManager.FindByIdAsync(id);
+            if (user != null)
+            {
+                if (!string.IsNullOrEmpty(email))
+                    user.Email = email;
+                else
+                    ModelState.AddModelError("", "Email cannot be empty");
+
+                if (!string.IsNullOrEmpty(password))
+                    user.PasswordHash = passwordHasher.HashPassword(user, password);
+                else
+                    ModelState.AddModelError("", "Password cannot be empty");
+
+                if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
+                {
+                    IdentityResult result = await userManager.UpdateAsync(user);
+                    if (result.Succeeded)
+                        return RedirectToAction("ShowUser");
+                    else
+                        Errors(result);
+                }
+            }
+            else
+                ModelState.AddModelError("", "User Not Found");
+            return View(user);
+        }
+        private void Errors(IdentityResult result)
+        {
+            foreach (IdentityError error in result.Errors)
+                ModelState.AddModelError("", error.Description);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Delete(string id)
+        {
+            AppUser user = await userManager.FindByIdAsync(id);
+            if (user != null)
+            {
+                IdentityResult result = await userManager.DeleteAsync(user);
+                if (result.Succeeded)
+                    return RedirectToAction("ShowUser");
+                else
+                    Errors(result);
+            }
+            else
+                ModelState.AddModelError("", "User Not Found");
+            return View("Index", userManager.Users);
+        }
+        */
         public async Task<IActionResult> CourseIndex(int courseSemester, string courseProgramme, string searchString, string teacherString)
         {
             IQueryable<int> semesterQuery = _context.Course.OrderBy(m => m.Semester).Select(m => m.Semester).Distinct();
@@ -199,10 +332,36 @@ namespace NewUniversity.Controllers
             return _context.Course.Any(e => e.Id == id);
         }
 
-        public async Task<IActionResult> StudentIndex()
+        public async Task<IActionResult> StudentIndex(string searchFullName, string searchCourse)
         {
-            var students = await _context.Student.ToListAsync();
-            return View(students);
+            IQueryable<string> indexQuery = _context.Student.OrderBy(m => m.Index).Select(m => m.Index).Distinct();
+            IQueryable<Student> students = _context.Student.AsQueryable()
+                        .Include(s => s.Courses)
+                        .ThenInclude(s => s.Course);
+            var enrollments = _context.Enrollment
+                          .Include(e => e.Course)
+                          .Include(e => e.Student)
+                          .Where(s => s.Course.Title.Contains(searchCourse));
+
+            IEnumerable<int> enrollmentsID = enrollments.Select(e => e.StudentId).Distinct();
+
+            if (!string.IsNullOrEmpty(searchCourse))
+            {
+                students = students.Where(s => enrollmentsID.Contains(s.Id));
+            }
+
+            IEnumerable<Student> dataList = students as IEnumerable<Student>;
+
+            if (!string.IsNullOrEmpty(searchFullName))
+            {
+                dataList = dataList.Where(s => s.FullName.ToLower().Contains(searchFullName.ToLower())).ToList();
+            }
+
+            var studentViewModel = new StudentFilterViewModel
+            {
+                Students = dataList.ToList()
+            };
+            return View(studentViewModel);
         }
         public async Task<IActionResult> StudentDetails(int? id)
         {
@@ -375,42 +534,41 @@ namespace NewUniversity.Controllers
         {
             return _context.Student.Any(e => e.Id == id);
         }
-        public async Task<IActionResult> TeacherIndex() 
+        public async Task<IActionResult> TeacherIndex(string teacherAcademicRank, string teacherDegree, string searchFullName)
         {
-            /* var teachers = from m in _context.Teacher
-                            select m;
-             var t = from m in _context.Teacher
-                     select m;
-             IQueryable<string> rankQuery = _context.Teacher.OrderBy(m => m.AcademicRank).Select(m => m.AcademicRank).Distinct();
-             IQueryable<string> degreeQuery = _context.Teacher.OrderBy(m => m.Degree).Select(m => m.Degree).Distinct();
+            var teachers = from m in _context.Teacher
+                           select m;
+            var t = from m in _context.Teacher
+                    select m;
+            IQueryable<string> rankQuery = _context.Teacher.OrderBy(m => m.AcademicRank).Select(m => m.AcademicRank).Distinct();
+            IQueryable<string> degreeQuery = _context.Teacher.OrderBy(m => m.Degree).Select(m => m.Degree).Distinct();
 
-             if (!string.IsNullOrEmpty(teacherAcademicRank))
-             {
-                 teachers = teachers.Where(x => x.AcademicRank == teacherAcademicRank);
-             }
+            if (!string.IsNullOrEmpty(teacherAcademicRank))
+            {
+                teachers = teachers.Where(x => x.AcademicRank == teacherAcademicRank);
+            }
 
-             if (!string.IsNullOrEmpty(teacherDegree))
-             {
-                 teachers = teachers.Where(x => x.Degree == teacherDegree);
-             }
+            if (!string.IsNullOrEmpty(teacherDegree))
+            {
+                teachers = teachers.Where(x => x.Degree == teacherDegree);
+            }
 
-             IEnumerable<Teacher> datalist = teachers as IEnumerable<Teacher>;
+            IEnumerable<Teacher> datalist = teachers as IEnumerable<Teacher>;
 
-             if (!string.IsNullOrEmpty(searchFullName))
+            if (!string.IsNullOrEmpty(searchFullName))
 
-             {
-                 datalist = datalist.Where(s => s.FullName.ToLower().Contains(searchFullName.ToLower()));
-             }
+            {
+                datalist = datalist.Where(s => s.FullName.ToLower().Contains(searchFullName.ToLower()));
+            }
 
-             var teacherViewModel = new TeacherFilterViewModel
-             {
-                 AcademicRanges = new SelectList(await rankQuery.ToListAsync()),
-                 Degrees = new SelectList(await degreeQuery.ToListAsync()),
-                 Teachers = datalist.ToList()
-             };
-             */
-            var teachers = await _context.Teacher.ToListAsync();
-            return View(teachers);
+            var teacherViewModel = new TeacherFilterViewModel
+            {
+                AcademicRanges = new SelectList(await rankQuery.ToListAsync()),
+                Degrees = new SelectList(await degreeQuery.ToListAsync()),
+                Teachers = datalist.ToList()
+            };
+
+            return View(teacherViewModel);
         }
         public async Task<IActionResult> TeacherDetails(int? id)
         {

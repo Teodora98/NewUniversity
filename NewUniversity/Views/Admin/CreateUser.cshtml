@@ -1,0 +1,57 @@
+﻿<!--NewUniversit.Models.User
+
+<h1 class="bg-info text-white">Create User</h1>
+<a asp-action="Index" class="btn btn-secondary">Back</a>
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form method="post" asp-action="CreateUser">
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Password"></label>
+        <input asp-for="Password" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Roles"></label>
+        <input asp-for="Roles" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>-->
+@model NewUniversity.ViewModels.UserViewModel
+<form asp-action="CreateUser" role="form">
+    <div class="modal-body form-horizontal">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label asp-for="Email" class="col-lg-3 col-sm-3 control-label"></label>
+                    <div class="col-lg-6">
+                        <input asp-for="Email" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ApplicationRoleId" class="col-lg-3 col-sm-3 control-label"></label>
+                    <div class="col-lg-6">
+                        <select asp-for="ApplicationRoleId" asp-items="@Model.ApplicationRoles" class="form-control">
+                            <option>Please select</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label asp-for="Password" class="col-lg-3 col-sm-3 control-label"></label>
+                    <div class="col-lg-6">
+                        <input asp-for="Password" class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </div>
+    </div>
+</form>
